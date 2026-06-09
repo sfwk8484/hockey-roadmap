@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Roadmap Tube Pro</title>
+    <style>
+        :root {
+            --yt-red: #FF0000;
+            --primary-accent: #E53935;
+            --bg-card: rgba(15, 23, 42, 0.85); 
+            --bg-card-inner: rgba(30, 41, 59, 0.9);
+            --text-main: #FFFFFF;
+            --text-sub: #94A3B8;
+            --accent-blue: #38BDF8;
+            --accent-green: #4ADE80;
+            --accent-orange: #FB923C;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Noto Sans JP", sans-serif; 
+            color: var(--text-main); 
+            padding-bottom: 90px; 
+            line-height: 1.5; 
+            /* 【背景の修正】ご提示いただいたクリエイティブを刺激するアイスホッケービジュアルを固定背景に設定 */
+            background-image: linear-gradient(rgba(10, 16, 26, 0.55), rgba(10, 16, 26, 0.75)), url('https://images.unsplash.com/photo-1515703407324-5f753eed2079?auto=format&fit=crop&q=80&w=1280');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+        }
+        
+        .app-header { 
+            background-color: rgba(11, 19, 43, 0.8); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            padding: 16px; display: flex; align-items: center; justify-content: space-between; 
+            position: sticky; top: 0; z-index: 100; 
+        }
+        .app-logo { display: flex; align-items: center; gap: 8px; font-size: 1.3rem; font-weight: 900; letter-spacing: -0.5px; }
+        .logo-icon { color: var(--yt-red); font-size: 1.5rem; text-shadow: 0 0 10px rgba(255,0,0,0.5); }
+        .view-title { font-size: 0.8rem; font-weight: 700; color: var(--text-sub); border: 1px solid rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; text-transform: uppercase; }
+        
+        .container { width: 100%; max-width: 540px; margin: 0 auto; padding: 16px; }
+        
+        .dashboard-hero { 
+            background: rgba(255, 255, 255, 0.08); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px; padding: 24px; margin-bottom: 24px; 
+            border: 1px solid rgba(255,255,255,0.15); text-align: center; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
+        }
+        .total-progress-circle { 
+            width: 120px; height: 120px; border-radius: 50%; 
+            background: conic-gradient(var(--primary-accent) 0%, rgba(255,255,255,0.1) 0%); 
+            margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; position: relative; 
+        }
+        .total-progress-circle::after { content: ''; width: 100px; height: 100px; background: #0f172a; position: absolute; border-radius: 50%; z-index: 1; }
+        .total-progress-text { position: relative; z-index: 2; font-size: 1.8rem; font-weight: 900; }
+        
+        .level-progress-card { 
+            background: var(--bg-card); border-radius: 18px; padding: 16px; margin-bottom: 12px; 
+            border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; 
+            transition: all 0.2s; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        .level-progress-card:active { transform: scale(0.97); background: var(--bg-card-inner); }
+        
+        .progress-bar-bg { width: 100%; height: 8px; background-color: rgba(0,0,0,0.4); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #FF3B30, #FF9500); border-radius: 4px; transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+        .level-tabs { display: flex; overflow-x: auto; gap: 10px; padding: 10px 0 20px 0; scrollbar-width: none; }
+        .level-tabs::-webkit-scrollbar { display: none; }
+        .tab-chip { 
+            background: rgba(255,255,255,0.12); color: #E2E8F0; border: 1px solid rgba(255,255,255,0.15); 
+            padding: 10px 20px; border-radius: 25px; font-size: 0.85rem; font-weight: 700; white-space: nowrap; transition: all 0.2s;
+        }
+        .tab-chip.active { background: #FFF; color: #000; border-color: #FFF; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
+        
+        .yt-card { background: var(--bg-card); border-radius: 20px; margin-bottom: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .video-player-box { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; overflow: hidden; }
+        .video-thumb { width: 100%; height: 100%; object-fit: cover; }
+        .video-mock-bg { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            display: flex; justify-content: center; align-items: center; 
+            background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.6));
+        }
+        .play-button-yt { width: 60px; height: 42px; background-color: rgba(255, 0, 0, 0.9); border-radius: 12px; display: flex; justify-content: center; align-items: center; border: none; box-shadow: 0 5px 20px rgba(255,0,0,0.4); }
+        .play-icon { width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 16px solid white; margin-left: 4px; }
+        
+        .video-info-block { display: flex; padding: 18px; gap: 16px; }
+        
+        .custom-checkbox { 
+            width: 28px; height: 28px; border: 2px solid rgba(255,255,255,0.25); border-radius: 8px; 
+            display: flex; justify-content: center; align-items: center; cursor: pointer; 
+            background: var(--bg-card-inner); transition: all 0.2s;
+        }
+        .custom-checkbox.checked { background: var(--accent-green); border-color: var(--accent-green); box-shadow: 0 0 15px rgba(48, 209, 88, 0.4); }
+        .custom-checkbox::after { content: "✓"; color: transparent; font-weight: 900; font-size: 1.1rem; }
+        .custom-checkbox.checked::after { color: #000; }
+        .custom-checkbox input { display: none; }
+        
+        .video-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.3px; }
+        .meta-tag { background: rgba(255,255,255,0.12); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; color: #E2E8F0; margin-right: 6px; margin-bottom: 8px; display: inline-block; }
+        .meta-tag.active-tag { color: var(--accent-orange); background: rgba(255, 159, 10, 0.2); }
+        .point-caption { background: rgba(255,255,255,0.05); border-left: 4px solid var(--yt-red); padding: 12px; font-size: 0.9rem; color: #EEE; border-radius: 0 12px 12px 0; margin-top: 10px; }
+
+        .guidance-img-box { width: 100%; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); background: #000; margin-top: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .guidance-img-box iframe { width: 100%; height: 450px; border: none; }
+        
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 540px; 
+            background-color: rgba(10, 16, 26, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
+            border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-around; 
+            padding: 12px 0 max(12px, env(safe-area-inset-bottom)) 0; z-index: 1000; 
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; background: none; border: none; color: #8E8E93; font-size: 0.75rem; font-weight: 700; gap: 6px; width: 33%; transition: all 0.2s; }
+        .nav-item.active { color: #FFF; }
+        .nav-icon { font-size: 1.5rem; transition: transform 0.2s; }
+        .nav-item.active .nav-icon { transform: translateY(-3px); }
+        
+        .page-content { display: none; }
+        .page-content.active { display: block; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<header class="app-header">
+    <div class="app-logo"><span class="logo-icon">▶</span> ROADMAP PRO</div>
+    <div class="view-title" id="current-view-title">Dashboard</div>
+</header>
+
+<div class="container">
+
+    <div id="page-dashboard" class="page-content active">
+        <div class="dashboard-hero">
+            <div class="total-progress-circle" id="total-circle"><span class="total-progress-text" id="total-percent">0%</span></div>
+            <h2 style="font-size: 1.3rem;">Total Performance</h2>
+            <p style="color: var(--text-sub); margin-top: 5px;">125種類のスキルドリルを完全制覇せよ</p>
+        </div>
+        <div id="dashboard-list"></div>
+    </div>
+
+    <div id="page-roadmap" class="page-content">
+        <div class="level-tabs">
+            <button class="tab-chip active" id="chip-lv1" onclick="switchLevel('lv1', '基礎習得')">基礎習得</button>
+            <button class="tab-chip" id="chip-lv2" onclick="switchLevel('lv2', '応用展開')">応用展開</button>
+            <button class="tab-chip" id="chip-lv3" onclick="switchLevel('lv3', '実戦準備')">実戦準備</button>
+            <button class="tab-chip" id="chip-lv4" onclick="switchLevel('lv4', '試合出場')">試合出場</button>
+            <button class="tab-chip" id="chip-lv5" onclick="switchLevel('lv5', 'レギュラー')">レギュラー</button>
+        </div>
+        <div id="level-container"></div>
+    </div>
+
+    <div id="page-mindset" class="page-content">
+        <div style="margin-bottom: 24px;">
+            <h2 style="color: var(--accent-orange); font-size: 1.1rem; margin-bottom: 8px; font-weight: 800;">📈 成長の仕方</h2>
+            <div class="guidance-img-box">
+                <iframe src="https://drive.google.com/file/d/1WzOYPQUVpG1CtoNnfMDRmX4PT49zBfXl/preview"></iframe>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+            <h2 style="color: var(--accent-blue); font-size: 1.1rem; margin-bottom: 8px; font-weight: 800;">📋 指導の仕方</h2>
+            <div class="guidance-img-box">
+                <iframe src="https://drive.google.com/file/d/1N9ljXqzCCSnwkn_GYlstqfmdgOvtzWDF/preview"></iframe>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<nav class="bottom-nav">
+    <button class="nav-item active" id="nav-btn-dashboard" onclick="switchPage('dashboard')">
+        <span class="nav-icon">📊</span><span>Dashboard</span>
+    </button>
+    <button class="nav-item" id="nav-btn-roadmap" onclick="switchPage('roadmap')">
+        <span class="nav-icon">🏒</span><span>Trainings</span>
+    </button>
+    <button class="nav-item" id="nav-btn-mindset" onclick="switchPage('mindset')">
+        <span class="nav-icon">💡</span><span>Guidelines</span>
+    </button>
+</nav>
+
+<script>
+    // 125メニュー重複ゼロ・完全修正版データベース
+    const roadmapData = {
+        "lv1": [
+            {"daikomoku":"フォアスケート","shousai":"基本姿勢(パワーポジション)","point":"おしりを突き出して、前傾しすぎず、棒立ちになりすぎない力を入れやすい姿勢を探す。","pack":"無","area":"コーナー","video_url":"https://youtube.com/shorts/IQhkggyH5XI"},
+            {"daikomoku":"フォアスケート","shousai":"スケートで歩く","point":"壁を支えにして歩く。できるようになれば支え無しで歩く","pack":"無","area":"コーナー","video_url":"https://youtu.be/lgMizTGGN_U"},
+            {"daikomoku":"フォアスケート","shousai":"逆ハの字スケート","point":"大事なことは氷を滑ること。蹴らないこと","pack":"無","area":"コーナー","video_url":"https://youtu.be/lgMizTGGN_U"},
+            {"daikomoku":"フォアスケート","shousai":"横歩き（アウト→フラット→イン）","point":"横に歩いて全てのエッジの感覚を確かめるエッジワーク。アウトエッジの時は足首を曲げすぎない。","pack":"無","area":"コーナー","video_url":"https://youtu.be/IN7YbVpfHgM"},
+            {"daikomoku":"フォアスケート","shousai":"アウト→フラット→インスケート","point":"フォアスケートしながらアウト→フラット→インの感覚を確かめる。","pack":"無","area":"コーナー","video_url":"https://youtu.be/ghYsssk69p0"},
+            {"daikomoku":"フォアスケート","shousai":"片足バランススケート","point":"フィギュアスケートのように両手を広げて片足ずつスケートする。片足の時間を長くする。","pack":"無","area":"コーナー","video_url":"https://youtu.be/eXMnqUuq0fY"},
+            {"daikomoku":"フォアスケート","shousai":"しゃがんだまま両足スケート","point":"助走をつけてしゃがんだままスケートする。スティックでバランスを整えても良い。","pack":"無","area":"コーナー","video_url":"https://youtu.be/fMDQPXePY7I"},
+            {"daikomoku":"フォアスケート","shousai":"ひょうたん","point":"・姿勢が上下しないように固定する。<br>・脚を開くときはインエッジ。閉じるときにフラット→アウトエッジになるようにする。","pack":"無","area":"コーナー","video_url":"https://youtu.be/pp0Y3BDDp4A"},
+            {"daikomoku":"フォアスケート","shousai":"Cカット","point":"ひょうたんと同様。フラット→アウトエッジが難しければインエッジのみでもよい。","pack":"無","area":"コーナー","video_url":"https://youtu.be/9MuKckxfdWU"},
+            {"daikomoku":"フォアスケート","shousai":"スネーキング","point":"インエッジ中心のワーク。まっすぐ進むように注意する。","pack":"無","area":"コーナー","video_url":"https://youtu.be/pp0Y3BDDp4A"},
+            {"daikomoku":"フォアスケート","shousai":"スキースケート","point":"アウトエッジ中心のワーク。まっすぐ進むように注意する。","pack":"無","area":"コーナー","video_url":"https://youtu.be/pp0Y3BDDp4A"},
+            {"daikomoku":"ターン","shousai":"ハの字ターン","point":"曲がりたい方向に視線を向けると自然に腰も進行方向に曲がるので、視線が大事","pack":"無","area":"コーナー","video_url":"https://youtu.be/JcUKwwkyQt8"},
+            {"daikomoku":"ストップ","shousai":"ハの字ストップ","point":"スキーと同じ要領で、足を横に開いて氷をスライスすると減速する。足の母指球を使い、氷に対してなるべく鈍角にエッジを入射するのがポイント","pack":"無","area":"コーナー","video_url":"https://youtu.be/Hb3Cw6HuE0Q"},
+            {"daikomoku":"ストップ","shousai":"イの字ストップ（片足）","point":"片足を前に出してストップする。ストップするというより、氷をスライスするイメージの方が練習になる。","pack":"無","area":"コーナー","video_url":"https://youtu.be/syub-qnSb8Y"},
+            {"daikomoku":"フォアハンドパス","shousai":"ショートパス","point":"イメージはほうきを相手の方向に向かって払うイメージ。<br>・パックは叩かないこと。<br>・根元から回転をかけて相手のブレードをめがけてスティックを払う。","pack":"無","area":"コーナー","video_url":"https://youtu.be/tQSaHGT2yY4"},
+            {"daikomoku":"フォアハンドパス","shousai":"ワンタッチパス","point":"単純に叩くだけだと回転がぶれてパックがバウンドする恐れがあるので、叩きながら回転をかけることを意識する。","pack":"無","area":"コーナー","video_url":"https://youtube.com/shorts/K_jkohufrDY"},
+            {"daikomoku":"フォアハンドレシーブ","shousai":"フォアハンドレシーブ","point":"・ブレードはかぶせすぎず、開きすぎず。<br>・ブレードの角度は相手のパスの角度と平行に<br>・レシーブはブレードの根元から真ん中の間。<br>・体の前でレシーブする。","pack":"無","area":"コーナー","video_url":"https://youtu.be/dAwCLybJfiw"},
+            {"daikomoku":"バックハンドレシーブ","shousai":"バックハンドレシーブ","point":"・ブレードはかぶせすぎず、開きすぎず。<br>・ブレードの角度は相手のパスの角度と平行に<br>・レシーブはブレードの根元から真ん中の間。<br>・体の前でレシーブする。","pack":"無","area":"コーナー","video_url":"https://youtu.be/aOy16cPfhes"},
+            {"daikomoku":"スイープシュート","shousai":"スタンディングスイープシュート","point":"・スティックのトップハンドとボトムハンドの間の距離は肘から指先くらい。<br>・パスと同じ要領。ブレードの根元から回転をかけて、打ちたい方向にスティックのブレードを向ける。スティックのしなりを使う。イメージは力強くほうきをはくこと。","pack":"無","area":"スロットエリア","video_url":"https://youtu.be/GG2J8aosSQw"},
+            {"daikomoku":"リストシュート","shousai":"スタンディングリストシュート","point":"スイープシュートと要領は大体同じだが、パックの位置を進行方向の若干前に置き、スティックをしならせて叩く。","pack":"無","area":"スロットエリア","video_url":"https://youtu.be/JrKTrb6QfVE"}
+        ],
+        "lv2": [
+            {"daikomoku":"フォアスケート","shousai":"しゃがんだまま片足スケート","point":"助走をつけてしゃがんだままスケートする。スティックはない方がやりやすい？","pack":"無","area":"コーナー","video_url":"https://youtu.be/fMDQPXePY7I"},
+            {"daikomoku":"フォアスケート","shousai":"ひょうたん（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/pp0Y3BDDp4A"},
+            {"daikomoku":"フォアスケート","shousai":"Cカット（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/9MuKckxfdWU"},
+            {"daikomoku":"フォアスケート","shousai":"スネーキング（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/pp0Y3BDDp4A"},
+            {"daikomoku":"フォアスケート","shousai":"スタートダッシュ（正面）","point":"ハードル、カラーなどを3つ用意して、その間を素早く走ると習得しやすい。ポイントとしては足の重心はつま先で、陸上のスタートダッシュと似ている。","pack":"無","area":"コーナー","video_url":"https://youtu.be/U5iUUqNG4fw"},
+            {"daikomoku":"フォアスケート","shousai":"スタートダッシュ（横）","point":"正面のスタートダッシュと要領はおなじ。スタートの部分だけ横歩きのアウト→フラット→インを意識するとやりやすい。","pack":"無","area":"コーナー","video_url":"https://youtu.be/s2ykyFv4eG4"},
+            {"daikomoku":"ターン","shousai":"片足インエッジスケート","point":"足全体でバランスを確保する。大事なことは重心が安定すること。そのためにはおしりを突き出して、力が逃げないようにする。","pack":"無","area":"コーナー","video_url":"https://youtu.be/pp0Y3BDDp4A"},
+            {"daikomoku":"ターン","shousai":"両足ターン","point":"最初はインエッジ中心になっていいので、ターンする外側の足で遠心力を耐えて、アウトエッジも活用するイメージ","pack":"無","area":"コーナー","video_url":"https://youtu.be/pp0Y3BDDp4A"},
+            {"daikomoku":"ターン(バック)","shousai":"ハの字ターン","point":"曲がりたい方向に腰をひねると進みやすい。","pack":"無","area":"コーナー","video_url":"https://youtu.be/FB1T3UZlbY0"},
+            {"daikomoku":"ターン(バック)","shousai":"片足インエッジスケート","point":"インエッジに重心を傾けすぎるとバランスを崩してしまうので、10~15度足を内側に傾け、上半義の軸はまっすく傾かない。","pack":"無","area":"コーナー","video_url":"https://youtu.be/YOzInexHtNc"},
+            {"daikomoku":"ターン","shousai":"片足アウトエッジターン","point":"足首を傾けすぎると足首を痛めてしまうので、体全体を10~15度傾けてアウトエッジに乗るイメージ","pack":"無","area":"コーナー","video_url":"https://youtu.be/pp0Y3BDDp4A"},
+            {"daikomoku":"ターン","shousai":"モホーク","point":"足のつま先とかかとへの重心移動の繰り返し。","pack":"無","area":"コーナー","video_url":"https://youtu.be/xNaXIW-p2TM"},
+            {"daikomoku":"ストップ","shousai":"両足ストップ","point":"インエッジのストップができるようになったら、インエッジでストップしてその後にアウトエッジがついてくるイメージ","pack":"無","area":"コーナー","video_url":"https://youtu.be/YL0fTsKS8D0"},
+            {"daikomoku":"ストップ","shousai":"T字ストップ","point":"アウトエッジ中心のワーク。難しい場合はアウトエッジの片足ターンを行い。少しずつ氷をスライスする感覚を覚えると習得しやすい。","pack":"無","area":"コーナー","video_url":"https://youtu.be/qDZfBfOZAM8"},
+            {"daikomoku":"バックスケート","shousai":"ひょうたん","point":"フォアスケートとは逆で、つま先に重心をおいて足を開くと後ろに勝手に進む。足を開いた時は母指球に体重を乗せ、氷を削る。","pack":"無","area":"コーナー","video_url":"https://youtu.be/vIs0Z-KtCBU"},
+            {"daikomoku":"バックスケート","shousai":"Cカット","point":"ひょうたんと同様、足の母指球に重心を置いてまっすぐ進む","pack":"無","area":"コーナー","video_url":"https://youtu.be/b3VaPREnvDA"},
+            {"daikomoku":"バックスケート","shousai":"スネーキング","point":"イメージとして、おしりをフリフリすると習得しやすい。大事なのは進行方向に進むことなので、抵抗を生み出すことではない。","pack":"無","area":"コーナー","video_url":"https://youtu.be/TeP_E9KUET8"},
+            {"daikomoku":"バックスケート","shousai":"ひょうたん（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/vIs0Z-KtCBU"},
+            {"daikomoku":"バックスケート","shousai":"Cカット（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/b3VaPREnvDA"},
+            {"daikomoku":"バックスケート","shousai":"スネーキング（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/TeP_E9KUET8"},
+            {"daikomoku":"トランジッション","shousai":"スケートしながらトランジッション","point":"2の足がポイント。足の向きが進行方向と逆を向きながらも進む方向は前であるので、重心は足の真ん中からやや後ろだとスケートしながらやりやすい。","pack":"無","area":"コーナー","video_url":"https://youtu.be/bwQw0_LMt44"},
+            {"daikomoku":"フォアハンドパス","shousai":"サイドステップパス","point":"パススペースを確保するためにパススペースにサイドウォークしてパスを出す。フォアハンド、バックハンドの両方行うこと。","pack":"有","area":"コーナー","video_url":"作成検討"},
+            {"daikomoku":"フォアハンドパス","shousai":"八の字パス","point":"ターンしながらパスを出す。バックハンドも行うこと。バックハンドはトップハンドを中心にコントロールしてパスする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/A3HT5YhPyZs"},
+            {"daikomoku":"フォアハンドパス","shousai":"フリップパス","point":"ブレードを開いてパスをする。大事なのは根元から回転をかけること。","pack":"無","area":"コーナー","video_url":"https://youtu.be/dAwCLybJfiw"},
+            {"daikomoku":"バックハンドパス","shousai":"ショートパス","point":"トップハンドを中心にコントロールすること。根元から回転をかけ、ブレードは被せず開かず。","pack":"無","area":"コーナー","video_url":"https://youtu.be/ATojxkFXNpY"},
+            {"daikomoku":"バックハンドパス","shousai":"サイドステップパス","point":"パススペースを確保するためにパススペースにサイドウォークしてパスを出す。フォアハンド、バックハンドの両方行うこと。","pack":"有","area":"コーナー","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"八の字パス","point":"ターンしながらパスを出す。バックハンドも行うこと。バックハンドはトップハンドを中心にコントロールしてパスする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/A3HT5YhPyZs"},
+            {"daikomoku":"バックハンドパス","shousai":"ワンタッチパス","point":"ブレードを被せず、開かずパスを行う。回転を意識する。","pack":"無","area":"コーナー","video_url":"https://youtu.be/MsBXM8khUJI"},
+            {"daikomoku":"フォアハンドレシーブ","shousai":"フォアハンドレシーブ（パック有）","point":"・ブレードはかぶせすぎず、開きすぎず。<br>・ブレードの角度は相手のパスの角度と平行に<br>・レシーブはブレードの根元から真ん中の間。<br>・体の前でレシーブする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/dAwCLybJfiw"},
+            {"daikomoku":"バックハンドレシーブ","shousai":"バックハンドレシーブ（パック有）","point":"・ブレードはかぶせすぎず、開きすぎず。<br>・ブレードの角度は相手のパスの角度と平行に<br>・レシーブはブレードの根元から真ん中の間。<br>・体の前でレシーブする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/aOy16cPfhes"},
+            {"daikomoku":"フォアハンドパス","shousai":"フォアスケーティングパス（ショートサイド）","point":"前に進みながらのパスになるので、真横にパスを出すと後ろに流れてしまうので、若干斜め前を意識してパスを出す。","pack":"有","area":"コーナー、1/3面","video_url":"https://youtu.be/dAwCLybJfiw"},
+            {"daikomoku":"フォアハンドパス","shousai":"フォアスケーティングワンタッチパス（ショートサイド）","point":"前に進みながらのパスになるので、真横にパスを出すと後ろに流れてしまうので、若干斜め前を意識してパスを出す。","pack":"有","area":"コーナー、1/3面","video_url":"https://youtube.com/shorts/K_jkohufrDY"},
+            {"daikomoku":"フォアハンドパス","shousai":"バックスケーティングパス（ショートサイド）","point":"後ろに進みながらのパスになるので、真横にパスを出すと後ろに流れてしまうので、若干斜め後ろを意識してパスを出す。","pack":"有","area":"コーナー、1/3面","video_url":"https://youtu.be/uBJG2JckJm8"},
+            {"daikomoku":"バックハンドパス","shousai":"フォアスケーティングパス（ショートサイド）","point":"前に進みながらのパスになるので、真横にパスを出すと後ろに流れてしまうので、若干斜め前を意識してパスを出す。","pack":"有","area":"コーナー、1/3面","video_url":"https://youtu.be/MsBXM8khUJI"},
+            {"daikomoku":"フォアスケート","shousai":"クロスオーバー","point":"サークルスケートしながらやるとイメージが沸きやすい。","pack":"無","area":"サークル","video_url":"https://youtu.be/oVF_CoIa9ts"},
+            {"daikomoku":"トランジッション","shousai":"フォア→ストップ→トランジッション","point":"ストップしてからクロスオーバーを入れる。","pack":"無","area":"サークル","video_url":"https://youtu.be/MHcvmhFp-cQ"},
+            {"daikomoku":"フォアハンドパス","shousai":"トランジッションパス","point":"トランジッション中にパスレシーブは難しいので、体制が整ったらパスレシーブするように意識する。","pack":"有","area":"コーナー、サークル","video_url":"https://youtu.be/A3HT5YhPyZs"},
+            {"daikomoku":"バックハンドパス","shousai":"トランジッションパス","point":"バッククロスオーバーをしながらのパスは難しいので、整体してから自分の体までひきつけてパスを出す。","pack":"有","area":"コーナー、サークル","video_url":"https://youtu.be/A3HT5YhPyZs"},
+            {"daikomoku":"フォアハンドパス","shousai":"ロングパス","point":"ロングパスになると手元が力んでしまうが、大切なことはいかに力まずにパスを出せるか。すなわち、スティックを長く持ってスティックの特性を活用する。","pack":"無","area":"1/3面","video_url":"https://youtu.be/dAwCLybJfiw"},
+            {"daikomoku":"フォアハンドパス","shousai":"フォアスケーティングパス（正面）","point":"常にルックアップする。余計なハンドリングは行わない。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"フォアハンドパス","shousai":"フォアスケーティングワンタッチパス（正面）","point":"ブレードかぶせてワンタッチするとパスの方向が安定する。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"フォアハンドパス","shousai":"バックスケーティングパス（正面）","point":"パスを引き付けてパスを出すようにすると、自分の手元でパックをコントロールしやすい。パスを出す時に前すぎるとバランスを崩しやすい。","pack":"有","area":"1/3面","video_url":"https://youtu.be/uBJG2JckJm8"},
+            {"daikomoku":"フォアハンドパス","shousai":"バックスケーティングワンタッチパス（正面）","point":"ブレードかぶせてワンタッチするとパスの方向が安定する。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"ロングパス","point":"体全体を使って、ふり幅を大きくしてショートパスの要領でパスを出す。","pack":"無","area":"1/3面","video_url":"https://youtu.be/bcpj7LetuIY"},
+            {"daikomoku":"バックハンドシュート","shousai":"スタンディングバックハンドシュート","point":"ボトムハンドの位置はスティックの真ん中位、てこの原理でシュートを打つ。パックは根元から回転をかける。ブレードを被せすぎるとパックが上がりすぎてしまうので注意する。","pack":"無","area":"スロットエリア","video_url":"https://youtu.be/oRhGNh5rTmQ"},
+            {"daikomoku":"スラップシュート","shousai":"スタンディングスラップシュート","point":"ボトムハンドの位置はスティックの真ん中位（スティックのしなるポイントにもよる。）に持ち、パックの若干手前を叩く。","pack":"無","area":"スロットエリア","video_url":"https://youtu.be/gojYlPKpX2c"},
+            {"daikomoku":"リストシュート","shousai":"スタンディングリストシュート（片足）","point":"両足シュートと同じ要領だが、片足に体重を乗せて打つ。大切なことは転ばないようにバランスを取ること。かといって力を入れないのは本末転倒。","pack":"無","area":"スロットエリア","video_url":"https://youtu.be/c_5r2vtB8Ek"},
+            {"daikomoku":"スイープシュート","shousai":"スケート→スイープシュート","point":"スケートしながらなので、ハンドリングに集中してしまうと思うが、シュートを狙うためにルックアップは不可欠。シュート打つ瞬間はスケートしない。スケーティング時はスティックのしなりを使う。","pack":"有","area":"ブルー/コーナーからスロット","video_url":"https://youtu.be/z-1leJRIwEY"},
+            {"daikomoku":"リストシュート","shousai":"スケート→リストシュート","point":"スケートしながらなので、ハンドリングに集中してしまうと思うが、シュートを狙うためにルックアップは不可欠。シュート打つ瞬間はスケートしない。スケーティング時はスティックのしなりを使う。","pack":"有","area":"ブルー/コーナーからスロット","video_url":"https://youtu.be/z-1leJRIwEY"}
+        ],
+        "lv3": [
+            {"daikomoku":"フォアスケート","shousai":"スキースケート（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/pp0Y3BDDp4A"},
+            {"daikomoku":"ターン(バック)","shousai":"片足アウトエッジターン","point":"アウトエッジで蹴るイメージで行うとバランスを崩すので、小指球に重心を置きながらスケートするとやりやすい。","pack":"無","area":"コーナー","video_url":"https://youtu.be/YOzInexHtNc"},
+            {"daikomoku":"ターン","shousai":"タイトターン","point":"これはインエッジ、アウトエッジ両方使えないとできないので、出来なかった場合はアウトエッジを中心に練習する。イメージはブレーキかけながら俊足にターンする。","pack":"無","area":"コーナー","video_url":"https://youtu.be/o7TrmZqMNLE"},
+            {"daikomoku":"ターン","shousai":"片足インエッジスケート（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/pp0Y3BDDp4A"},
+            {"daikomoku":"ターン","shousai":"両足ターン（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/pp0Y3BDDp4A"},
+            {"daikomoku":"ターン","shousai":"片足アウトエッジターン（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/pp0Y3BDDp4A"},
+            {"daikomoku":"バックスケート","shousai":"スキースケート","point":"アウトエッジ中心を行う。氷を削ることは意識しなくていいので、膝を柔らかくエッジワークを練習する。","pack":"無","area":"コーナー","video_url":"https://youtu.be/xUc0_3ab4uc"},
+            {"daikomoku":"バックスケート","shousai":"スキースケート（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"コーナー","video_url":"https://youtu.be/xUc0_3ab4uc"},
+            {"daikomoku":"バックスケート","shousai":"スタートダッシュ（横）","point":"静止した状態からクロスオーバーをする。つまり、最初の一歩はアウトエッジで氷を削り加速する。","pack":"無","area":"コーナー","video_url":"https://youtu.be/s2ykyFv4eG4"},
+            {"daikomoku":"フォアハンドパス","shousai":"バックスケーティングワンタッチパス（ショートサイド）","point":"ブレードを被せず、開かずパスを行う。回転を意識する。","pack":"有","area":"コーナー、1/3面","video_url":"https://youtu.be/MsBXM8khUJI"},
+            {"daikomoku":"バックハンドパス","shousai":"バックスケーティングパス（ショートサイド）","point":"・ブレードを被せず、開かずパスを行う。回転を意識する。<br>・前に進みながらのパスになるので、真横にパスを出すと後ろに流れてしまうので、若干斜め前を意識してパスを出す。","pack":"有","area":"コーナー、1/3面","video_url":"https://youtu.be/uBJG2JckJm8"},
+            {"daikomoku":"バックハンドパス","shousai":"バックスケーティングワンタッチパス（ショートサイド）","point":"後ろに進みながらのパスになるので、真横にパスを出すと後ろに流れてしまうので、若干斜め後ろを意識してパスを出す。","pack":"有","area":"コーナー、1/3面","video_url":"https://youtu.be/MsBXM8khUJI"},
+            {"daikomoku":"フォアスケート","shousai":"クロスオーバー（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする.","pack":"有","area":"サークル","video_url":"https://youtu.be/oVF_CoIa9ts"},
+            {"daikomoku":"バックスケート","shousai":"クロスオーバー","point":"サークルスケートが習得のイメージわきやすい。サークルの内側の足はイン→フラット→アウト。","pack":"無","area":"サークル","video_url":"https://youtu.be/yEJN03x5K2o"},
+            {"daikomoku":"トランジッション","shousai":"フォア→ターン→トランジッション","point":"右方向にトランジッションする場合は、一旦左にターンして膨らんでから行う。","pack":"無","area":"サークル","video_url":"https://www.instagram.com/reel/DHMn56WTUa4/"},
+            {"daikomoku":"トランジッション","shousai":"フォア→ストップ→トランジッション（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"サークル","video_url":"https://www.instagram.com/reel/DHMn56WTUa4/"},
+            {"daikomoku":"トランジッション","shousai":"フォア→ターン→トランジッション（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"サークル","video_url":"https://www.instagram.com/reel/DHMn56WTUa4/"},
+            {"daikomoku":"フォアハンドパス","shousai":"フォアスケーティングパス（ロングサイド）","point":"力まずに相手の進行方向を意識してパスをする。スケーティングしながらフェンスの目印にパスをするのも良い。","pack":"有","area":"1/3面","video_url":"https://youtu.be/bcpj7LetuIY"},
+            {"daikomoku":"フォアハンドパス","shousai":"バックスケーティングパス（ロングサイド）","point":"力まずに相手の進行方向を意識してパスをする。スケーティングしながらフェンスの目印にパスをするのも良い。","pack":"有","area":"1/3面","video_url":"https://www.youtube.com/watch?v=uBJG2JckJm8"},
+            {"daikomoku":"バックハンドパス","shousai":"フォアスケーティングパス（正面）","point":"手だけの力を使ってパスをしようとすると上手くいかないので、体に引き付けて体のひねりを使ってパスを出す。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"バックスケーティングパス（正面）","point":"手だけの力を使ってパスをしようとすると上手くいかないので、体に引き付けて体のひねりを使ってパスを出す。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"フォアハンドパス","shousai":"フォアスケーティングフリップパス（正面）","point":"ブレードを開いてパスをする。大事なのは根元から回転をかけること。","pack":"有","area":"1/3面","video_url":"https://youtu.be/dAwCLybJfiw"},
+            {"daikomoku":"バックハンドシュート","shousai":"スケート→バックハンドシュート","point":"シュート打つときにトップハンド側の足からボトムハンド側への足へ重心移動を行って打つ。","pack":"有","area":"ブルー/コーナーからスロット","video_url":"https://youtu.be/oRhGNh5rTmQ"},
+            {"daikomoku":"スラップシュート","shousai":"スケート→スラップシュート","point":"最初の方はボトムハンドをスティックの真ん中に持ちながらハンドリング→シュートでいいと思う。慣れてくれば最初からハンドリングしやすい位置にボトムハンドを持つ。","pack":"有","area":"ブルー/コーナーからスロット","video_url":"https://youtu.be/gojYlPKpX2c"},
+            {"daikomoku":"リストシュート","shousai":"スケート→リストシュート（Lv3仕様）","point":"ありがちなのが、重心が不安定になり、ブレードが開いてシュートがペラペラしてしまうこと。最初は低めに強いシュートを打つ。それを繰り返しているとブレードを被せてリストシュートを打てるようになる。","pack":"有","area":"スロットエリア","video_url":"https://youtu.be/z-1leJRIwEY"}
+        ],
+        "lv4": [
+            {"daikomoku":"ターン","shousai":"タイトターン（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"コーナー","video_url":"作成検討"},
+            {"daikomoku":"バックスケート","shousai":"クロスオーバー（パック有）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"サークル","video_url":"作成検討"},
+            {"daikomoku":"トランジッション","shousai":"フォア→アウトエッジターン→トランジッション","point":"恐らくアウトエッジターンが最も難しく躓くと思うので、バックスケートの片足でアウトエッジターンをすると習得しやすい。","pack":"無","area":"サークル","video_url":"作成検討"},
+            {"daikomoku":"フォアハンドパス","shousai":"フォアスケーティングワンタッチパス（ロングサイド）","point":"パスをそのままたたくのではなく、パスの力をレシーブで吸収してその反力でパスを出すイメージ","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"フォアハンドパス","shousai":"フォアスケーティングフリップパス（ショートサイド）","point":"ブレードを開いて、思ったより力をやさしくしてパスする。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"フォアハンドパス","shousai":"バックスケーティングフリップパス（正面）","point":"No6と同様、前かがみになると姿勢が崩れてスケートしにくいので、姿勢を正することを意識する。","pack":"原","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"フォアハンドパス","shousai":"バックスケーティングフリップパス（ショートサイド）","point":"ブレードを開いて、思ったより力をやさしくしてパスする。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"フリップパス","point":"ブレードを閉じた状態で根元から回転をかける。大切なことはトップハンドをメインで使うこと。","pack":"無","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"フォアスケーティングパス（ロングサイド）","point":"スティックを少し長めに持って、体の遠心力を使ってパスを出す。ボトムハンドを力みすぎるとパスが弱くなり、コントロールが下がるので注意","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"フォアスケーティングワンタッチパス（正面）","point":"ワンタッチと言ってもイメージは少しだけレシーブして相手からのパスの威力をそのままあいてに返してあげる。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"フォアスケーティングフリップパス（正面）","point":"フォアハンドからバックハンドに切り替えるとき、斜め手前にハンドリングして、トップハンドの自由さを確保してあげる。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"フォアスケーティングフリップパス（ショートサイド）","point":"ほんの少しだけパックをブレードの根元から叩いて回転をかける。最初はパックに対して閉じたブレードを鋭角に入射してパックを上げる練習が良い。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"バックスケーティングパス（ロングサイド）","point":"真横に出そうとすると失敗しやすいので、相手のスケート靴をめがけてパス出すと案外ちょうどよいのかもしれない。（ロング限定）","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"バックスケーティングフリップパス（正面）","point":"フォアハンドからバックハンドに切り替えるとき、斜め手前にハンドリングして、トップハンドの自由さを確保してあげる。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"ワンタイムシュート","shousai":"スタンディングワンタイムシュート","point":"ブレードはかぶせておいて、力むことなく体のひねりを使ってゴールに運ぶイメージ","pack":"無","area":"スロットエリア","video_url":"作成検討"},
+            {"daikomoku":"バックハンドシュート","shousai":"スケート→バックハンドシュート（プロテクション有）","point":"フォアハンドで打てないときにバックハンド側にハンドリングして、パックプロテクションしながら腰をひねってシュートを打つ。","pack":"有","area":"ブルー/コーナーからスロット","video_url":"作成検討"},
+            {"daikomoku":"ワンタイムシュート","shousai":"スケート→ワンタイムシュート","point":"最初の方はボトムハンドをスティックの真ん中に持ちながらハンドリング→シュートでいいと思う。慣れてくれば最初からハンドリングしやすい位置にボトムハンドを持つ。","pack":"有","area":"ブルー/コーナーからスロット","video_url":"作成検討"},
+            {"daikomoku":"スイープシュート","shousai":"スケート→スイープシュート（プレッシャー有）","point":"相手→自分→パックの距離でパックを守る。パックプロテクション時は不格好でもいいので最後は必ずシュートする。大股でパワーポジションを整えて軸をブラさないようにする。","pack":"有","area":"ブルー/コーナーからスロット","video_url":"作成検討"},
+            {"daikomoku":"リストシュート","shousai":"スケート→リストシュート（プレッシャー有・両足）","point":"プレッシャー時はシュートコースが限られているので、DFの股下や、ワンフェイント入れてシュートコースを作るようにする。","pack":"有","area":"ブルー/コーナーからスロット","video_url":"作成検討"},
+            {"daikomoku":"スラップシュート","shousai":"スケート→スラップシュート（プレッシャー有）","point":"スティックを振りかぶると、たいていは相手Dfがシュートブロック動作に入ることが多いので、シュートフェイントしてスケーティングを行うのもあり。","pack":"有","area":"ブルー/コーナーからスロット","video_url":"作成検討"},
+            {"daikomoku":"ワンタイムシュート","shousai":"スケート→ワンタイムシュート（プレッシャー有・フェイント）","point":"スティックを大きく振りかぶらず、スティックを氷につけておく。そうすると相手もパスを出しやすくなる。","pack":"有","area":"ブルー/コーナーからスロット","video_url":"作成検討"},
+            {"daikomoku":"リストシュート","shousai":"スケート→リストシュート（プレッシャー有・片足）","point":"プレッシャー時はシュートコースが限られているので、DFの股下や、ワンフェイント入れてシュートコースを作るようにする。","pack":"有","area":"ブルー/コーナーからスロット","video_url":"作成検討"}
+        ],
+        "lv5": [
+            {"daikomoku":"トランジッション","shousai":"フォア→アウトエッジターン→トランジッション（Lv5仕様）","point":"パックを持つとパックを見て視線が下がってしまうので、常にルックアップする。","pack":"有","area":"サークル","video_url":"作成検討"},
+            {"daikomoku":"フォアハンドパス","shousai":"フォアスケーティングフリップパス（ロングサイド・Lv5）","point":"スイープシュートを打つイメージがいいかもしれない。感覚としてスティックの根元からかなり回転が伝わってくる。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"フォアハンドパス","shousai":"バックスケーティングワンタッチパス（ロングサイド・Lv5）","point":"ワンタッチと言ってもイメージは少しだけレシーブして相手からのパスの威力をそのままあいてに返してあげる。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"フォアハンドパス","shousai":"バックスケーティングフリップパス（ロングサイド・Lv5）","point":"スイープシュートを打つイメージがいいかもしれない。感覚としてスティックの根元からかなり回転が伝わってくる。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"フォアスケーティングワンタッチパス（ロングサイド・Lv5）","point":"腕だけ力を入れてパスすると相手のパスの威力に負けてパックの軌道が乱れるので、パワーポジションで腰を深く入れてパスを出す。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"フォアスケーティングフリップパス（ロングサイド・Lv5）","point":"スティックを少し長めに持って、体の遠心力を使ってパスを出す。ボトムハンドを力みすぎるとパスが弱くなり、コントロールが下がるので注意","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"バックスケーティングワンタッチパス（ロングサイド）","point":"ほんの少しだけパックをブレードの根元から叩いて回転をかける。最初はパックに対して閉じたブレードを鋭角に入射してパックを上げる練習が良い。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"バックスケーティングフリップパス（ショートサイド）","point":"ほんの少しだけパックをブレードの根元から叩いて回転をかける。最初はパックに対して閉じたブレードを鋭角に入射してパックを上げる練習が良い。","pack":"有","area":"1/3面","video_url":"作成検討"},
+            {"daikomoku":"バックハンドパス","shousai":"バックスケーティングフリップパス（ロングサイド）","point":"スティックを少し長めに持って、体の遠心力を使ってパスを出す。ボトムハンドを力みすぎるとパスが弱くなり、コントロールが下がるので注意","pack":"有","area":"1/3面","video_url":"作成検討"}
+        ]
+    };
+
+    const levelDisplayNames = { "lv1": "Lv1 基礎習得", "lv2": "Lv2 応用展開", "lv3": "Lv3 実戦準備", "lv4": "Lv4 試合出場", "lv5": "Lv5 レギュラー" };
+    let progressStore = JSON.parse(localStorage.getItem('hockey_pro_v5')) || { "lv1": {}, "lv2": {}, "lv3": {}, "lv4": {}, "lv5": {} };
+
+    window.addEventListener('DOMContentLoaded', () => { renderDashboard(); });
+
+    function switchPage(pageId) {
+        document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.getElementById('page-' + pageId).classList.add('active');
+        document.getElementById('nav-btn-' + pageId).classList.add('active');
+        if (pageId === 'dashboard') { renderDashboard(); document.getElementById('current-view-title').innerText = "Dashboard"; }
+        else if (pageId === 'roadmap') { switchLevel('lv1', '基礎習得'); }
+        else if (pageId === 'mindset') { document.getElementById('current-view-title').innerText = "Guidelines"; }
+    }
+
+    function renderDashboard() {
+        const listContainer = document.getElementById('dashboard-list');
+        listContainer.innerHTML = '';
+        let totalItems = 0; let totalCleared = 0;
+        
+        Object.keys(roadmapData).forEach(lvl => {
+            const items = roadmapData[lvl];
+            let cleared = Object.keys(progressStore[lvl] || {}).length;
+            totalItems += items.length; totalCleared += cleared;
+            const percent = Math.round((cleared / items.length) * 100);
+            
+            const card = document.createElement('div');
+            card.className = 'level-progress-card';
+            card.onclick = () => { switchPage('roadmap'); switchLevel(lvl, levelDisplayNames[lvl]); };
+            card.innerHTML = `
+                <div style="flex:1; padding-right:15px;">
+                    <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1rem; margin-bottom:5px;">
+                        <span>${levelDisplayNames[lvl]}</span>
+                        <span style="color:var(--text-sub); font-size:0.8rem;">${cleared}/${items.length}</span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${percent}%"></div></div>
+                </div><div style="font-weight:900; color:var(--text-sub);">›</div>`;
+            listContainer.appendChild(card);
+        });
+        const totalPercent = Math.round((totalCleared / totalItems) * 100);
+        document.getElementById('total-percent').innerText = totalPercent + '%';
+        document.getElementById('total-circle').style.background = `conic-gradient(var(--primary-accent) ${totalPercent}%, rgba(255,255,255,0.1) ${totalPercent}%)`;
+    }
+
+    function switchLevel(levelKey, label) {
+        document.querySelectorAll('.tab-chip').forEach(btn => btn.classList.remove('active'));
+        const chip = document.getElementById('chip-' + levelKey);
+        if(chip) chip.classList.add('active');
+        document.getElementById('current-view-title').innerText = label;
+        const container = document.getElementById('level-container');
+        container.innerHTML = '';
+        
+        roadmapData[levelKey].forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'yt-card';
+            const isChecked = progressStore[levelKey][index] ? 'checked' : '';
+            
+            let ytId = '';
+            if(item.video_url.includes('http')) {
+                const match = item.video_url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/);
+                if(match && match[2].length === 11) ytId = match[2];
+            }
+
+            let thumbHtml = `<div class="video-mock-bg"><button class="play-button-yt"><div class="play-icon"></div></button></div>`;
+            if (ytId) thumbHtml = `<img src="https://img.youtube.com/vi/${ytId}/mqdefault.jpg" class="video-thumb">` + thumbHtml;
+            else thumbHtml = `<div class="video-thumb" style="background:linear-gradient(45deg,#1f2937,#0f172a); display:flex; align-items:center; justify-content:center; color:#64748b; font-size:0.8rem; padding:10px; text-align:center;">${item.video_url || 'No Video'}</div>` + thumbHtml;
+
+            let packTag = item.pack ? `<span class="meta-tag ${item.pack.includes('有') ? 'active-tag' : ''}">パック:${item.pack}</span>` : '';
+            let areaTag = item.area && item.area !== '-' ? `<span class="meta-tag">エリア:${item.area}</span>` : '';
+            
+            card.innerHTML = `
+                <div class="video-player-box" onclick="if('${item.video_url}'.includes('http')) window.open('${item.video_url}', '_blank')">${thumbHtml}</div>
+                <div class="video-info-block">
+                    <div><label class="custom-checkbox ${isChecked}" id="chk-${levelKey}-${index}"><input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCheck(this, '${levelKey}', ${index})"></label></div>
+                    <div style="flex:1">
+                        <div class="video-title">${item.shousai}</div>
+                        <div class="meta-tag" style="margin-bottom:6px; background:rgba(255,255,255,0.05); color:var(--text-sub); font-size:0.7rem;">${item.daikomoku}</div>
+                        <div class="video-meta-tags">${packTag}${areaTag}</div>
+                        ${item.point ? `<div class="point-caption">💡 ${item.point}</div>` : ''}
+                    </div>
+                </div>`;
+            container.appendChild(card);
+        });
+    }
+
+    function toggleCheck(cb, lvl, idx) {
+        const label = document.getElementById(`chk-${lvl}-${idx}`);
+        if(cb.checked) { label.classList.add('checked'); progressStore[lvl][idx] = true; }
+        else { label.classList.remove('checked'); delete progressStore[lvl][idx]; }
+        localStorage.setItem('hockey_pro_v5', JSON.stringify(progressStore));
+    }
+</script>
+</body>
+</html>
